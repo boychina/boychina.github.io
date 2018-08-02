@@ -25,3 +25,33 @@ tags:
 
 ##### 准备
 
+开发一个 CLI ，需要用到一下工具：
+
+ * commander.js
+ * ShellJS
+ * download-git-repo
+ * chalk
+ * inquirer
+ * ora
+
+##### 开始
+
+新建一个文件夹，名称起做 demo-cli ，并在文件夹内 npm init 。在 demo-cli 文件夹内，新建 bin 文件夹，并在该文件夹内新建 index.js 文件。 紧接着，打开 demo-cli 文件夹内的 package.json 文件，在里边新增加如下命令。
+
+```
+{
+    "bin": {
+        "demo": "./bin/index.js"
+    }
+}
+```
+
+这句代码的意思是指，在你使用 demo 命令的时候，会去执行 bin 文件夹下的 index.js 文件。
+
+这时候，我们在 index.js 文件，写入一下代码。
+
+```
+#!/usr/bin/env node
+
+console.log('Hello CLI');
+```
