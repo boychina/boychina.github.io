@@ -1,15 +1,17 @@
 ---
 layout:     post
-title:      "关于生活与生存"
-subtitle:   "About lift and survival"
-date:       2018-07-31 12:00:00
+title:      "jekyll 构建个人博客"
+subtitle:   "jekyll run blog"
+date:       2018-08-02
 author:     "Mr.厉害"
 header-img: "img/in-post/about-life-and-survival/life-and-survival.jpg"
 header-mask: 0.3
 catalog:    true
 tags:
-    - 生活
+    - jekyll
 ---
+
+几天时间，通过jekyll构建的个人博客在window平台本地运行起来了！
 
 开始写自己的博客，之前励志在自己的博客里能顾谈论各种高端的技术，努力耕耘让自己的博客成为自己职场工作的傍身宝剑，有朝一日宝剑出鞘，技惊四座。回想一下，只是一个没有什么技术情怀的码农的异想天开。之前博客园也好久没有写技术博客的内容，有时候想写点什么，往往觉得都是些陈词滥调，平常的工作大多也都是重复耕耘，写点什么的热情也慢慢下降。
 
