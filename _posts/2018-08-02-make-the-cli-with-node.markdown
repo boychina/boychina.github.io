@@ -40,10 +40,12 @@ tags:
 
 ```
 {
-    "bin": {
-        "demo": "./bin/index.js"
-    }
+  "name": "demo-cli",
+  "bin": {
+    "demo": "./bin/index.js"
+  }
 }
+
 ```
 
 这句代码的意思是指，在你使用 demo 命令的时候，会去执行 bin 文件夹下的 index.js 文件。
@@ -55,3 +57,14 @@ tags:
 
 console.log('Hello CLI');
 ```
+在 demo-cli 目录下依次执行 npm link 、 demo ，这个时候，你会发现控制台输出了 hello CLI。
+
+![](/img/in-post/make-the-cli-with-node/make-the-cli-with-node-01.jpg)
+
+> 备注：
+> * #!/usr/bin/env node 告诉操作系统用 node 来运行此文件
+> * npm link 作用主要是在开发 npm 模块的时候，我们会希望边开发边调试。这个时候， npm link 就派上用场了。
+
+##### 逐渐深入
+
+1. 
