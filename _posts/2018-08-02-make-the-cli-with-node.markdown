@@ -160,19 +160,25 @@ function dewnloadTemplate(params) {
 
 function updateTemplateFile(params) {
   let { name, description } = params;
-  fs.readFile(`${path.resolve(dir)}/public/package.json`, (err, buffer) => {
+  fs.readFile(`${path.resolve(dir)}/package.json`, (err, buffer) => {
     if(err) {
       console.log(chalk.red(err));
       return false;
     }
     shell.rm('-f', `${path.resolve(dir)}/.git`);
-    shell.rm('-f', `${path.resolve(dir)}/public/CHANGELOG.md`);
+    shell.rm('-f', `${path.resolve(dir)}/CHANGELOG.md`);
     let packageJson = JSON.parse(buffer);
     Object.assign(packageJson, params);
-    fs.writeFileSync(`${path.resolve(dir)}/public/package.json`, JSON.stringify(packageJson, null, 2));
+    fs.writeFileSync(`${path.resolve(dir)}/package.json`, JSON.stringify(packageJson, null, 2));
     fs.writeFileSync(`${path.resolve(dir)}/README.md`, `# ${name}\n> ${description}`);
     spinner.succeed('创建完毕');
   });
 }
 
 ```
+
+* inquirer 主要提供交互命令的功能。 validate 返回 true 代表输入验证合法，如果返回任意字符串，则会替代默认的错误消息返回。
+
+* 通过 node 中 fs 模块来判断文件夹是否已存在。
+
+> path.resolve 方法用于将相对路径转为绝对路径。它接收多个参数，依次表示所有进入的路径，直到将最后一个参数撰文绝对路径。如果根据参数无法得到绝对路径，就以当前路径座位基准。除了根目录，该方法的返回值都不带尾部的斜杠。
