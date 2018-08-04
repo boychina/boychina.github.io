@@ -4,7 +4,7 @@ title:      "如何用 Node 来制作 CLI"
 subtitle:   "How to make CLI with Node"
 date:       2018-08-02
 author:     "Mr.厉害"
-header-img: "img/in-post/about-life-and-survival/life-and-survival.jpg"
+header-img: "img/in-post/make-the-cli-with-node/make-the-cli-with-node-bg.jpg"
 header-mask: 0.3
 catalog:    true
 tags:
