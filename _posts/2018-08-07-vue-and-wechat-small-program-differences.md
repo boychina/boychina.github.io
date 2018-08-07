@@ -66,7 +66,7 @@ vue: vue 动态绑定一个变量的值为元素的某个属性的时候，会�
 小程序：绑定某个变量的值为元素属性时，会用两个大括号括起来，如果不加括号，会被认为是字符串。如：
 
 ```js
-<image src="{{imgSrc}}"></image>
+<image src="{ {imgSrc} }"></image>
 ```
 
 ### 三、列表渲染
@@ -78,8 +78,9 @@ vue:
 ```js
 <ul id="example-1">
   <li v-for="item in items">
-    {{ item.message }}
+    { {item.message} }
   </li>
+
 </ul>
 
 let example1 = nex Vue({
@@ -105,7 +106,7 @@ Page({
   ]
 })
 
-<text wx:for="{{items}}">{{item}}</text>
+<text wx:for="{ {items} }">{ {item} }</text>
 ```
 
 ### 四、显示与隐藏元素
@@ -120,6 +121,7 @@ vue：使用 v-on:event 绑定事件，或者使用 @event 绑定事件，例如
 
 ```js
 <button v-on:click="counter += 1">Add 1</button>
+
 <button v-on:click.stop="counter += 1">Add 1</button> // 阻止事件冒泡
 ```
 
@@ -127,6 +129,7 @@ vue：使用 v-on:event 绑定事件，或者使用 @event 绑定事件，例如
 
 ```js
 <button bindtap="noWork">明天不上班</button>
+
 <button catchtap="noWork">明天不上班</button> // 阻止事件冒泡
 ```
 
@@ -156,7 +159,7 @@ new Vue({
 下面是代码，可以感受一下：
 
 ```js
-<input bindinput="bindReason" placeholder="填写理由" class="reason" value="{{ reason }}" name="reason" />
+<input bindinput="bindReason" placeholder="填写理由" class="reason" value="{ { reason } }" name="reason" />
 
 Page({
   data: {
@@ -198,7 +201,7 @@ new Vue({
 在小程序中，不能直接在绑定事件的方法中传入参数，需要将参数作为属性值，绑定到元素的 data- 属性上，然后在方法中，通过 e.currentTarget.dataset.* 的方法获取，从而完成参数的传递，很麻烦有没有...
 
 ```js
-<view class="tr" bindtap="toApprove" data-id="{{ item.id }}"></view>
+<view class="tr" bindtap="toApprove" data-id="{ { item.id } }"></view>
 
 Page({
   data: {
@@ -302,14 +305,20 @@ export default{
 // 子组件
 <!--components/tabBar/tabBar.wxml-->
 <view class='tabbar-wrapper'>
-  <view class='left-bar {{ currentpage === "index" ? "active": "" }}' bindtap='jumpToIndex'>
+  <view class='left-bar { { currentpage === "index" ? "active": "" } }' bindtap='jumpToIndex'>
     <text class='iconfont icon-shouye'></text>
+
     <view>首页</view>
+
   </view>
-  <view class='right-bar {{ currentpage === "setting" ? "active": "" }}' bindtap='jumpToSetting'>
+
+  <view class='right-bar { { currentpage === "setting" ? "active": "" } }' bindtap='jumpToSetting'>
     <text class='iconfont icon-shezhi'></text>
+
     <view>设置</view>
+
   </view>
+
 </view>
 ```
 
@@ -323,7 +332,7 @@ export default{
 // 父组件 foo.vue
 <template>
   <div class="container">
-    <bar :title="title"></bar>
+    <bar :title="title"></bar> 
   </div>
 </template>
 
@@ -343,7 +352,7 @@ export default{
 // 子组件bar.vue
 <template>
   <div class="search-box">
-    <div :title="title"></div>
+    <div :title="title"></div> 
   </div>
 </template>
 
@@ -405,7 +414,7 @@ toggleToast(e) {
 }
 ```
 
-#### 如果父组件想调用子组件的方法
+#### 3. 如果父组件想调用子组件的方法
 
 vue 会给子组件添加一个 ref 属性，通过 this.$refs.ref 的值便可以获取到该子组件，然后便可以调用子组件中的任意方法，例如：
 
@@ -428,3 +437,5 @@ this.selectComponent('#id').syaHello()
 ````
 
 小程序和 vue 在这点上太相似了，有木有...
+
+> 注：双花括号{}会存在解析不出来的问题，所以涉及到的地方都是中间加了空格的。
