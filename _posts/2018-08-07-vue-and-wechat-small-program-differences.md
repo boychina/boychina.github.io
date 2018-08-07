@@ -108,3 +108,256 @@ Page({
 <text wx:for="{{items}}">{{item}}</text>
 ```
 
+### 四、显示与隐藏元素
+
+vue 中，使用 v-if 和 v-show 控制元素的显示和隐藏。
+
+小程序中，使用 wx-if 和 hidden 控制元素的显示和隐藏。
+
+### 五、事件处理
+
+vue：使用 v-on:event 绑定事件，或者使用 @event 绑定事件，例如：
+
+```js
+<button v-on:click="counter += 1">Add 1</button>
+<button v-on:click.stop="counter += 1">Add 1</button> // 阻止事件冒泡
+```
+
+小程序中，全用 bindtap(bind+event)，或者 catchtap(catch+event)绑定事件，例如：
+
+```js
+<button bindtap="noWork">明天不上班</button>
+<button catchtap="noWork">明天不上班</button> // 阻止事件冒泡
+```
+
+### 六、数据双向绑定
+
+1. 设置值
+
+在 vue 中， 只需要在表单元素上加上 v-model ，然后再绑定 data 中对应的值，当表单元素内容发生变化时，data 中对应的值也会相应改变，这是 vue 非常 nice 的一点。
+
+```js
+<div id="app">
+  <input v-model="reason" placeholder="填写理由" class="reason" />
+</div>
+
+new Vue({
+  el: '#app',
+  data: {
+    reason: ''
+  }
+})
+```
+
+但是在小程序中，却没有这个功能。那怎么办呢？
+
+当表单内容发生变化时，会触发表单元素上绑定的方法，然后在该方法中，通过 this.setData({ key: value }) 来将表单上的值赋值给 data 中的对应值。
+
+下面是代码，可以感受一下：
+
+```js
+<input bindinput="bindReason" placeholder="填写理由" class="reason" value="{{ reason }}" name="reason" />
+
+Page({
+  data: {
+    reason: ''
+  },
+  bindReason(e) {
+    this.setData({
+      reason: e.detail.value
+    })
+  }
+})
+```
+
+当页面表单元素很多的时候，更改值就是一件体力活了。和小程序一比较，vue 的 v-model 简直爽的不要不要的。
+
+2. 取值
+
+vue 中，通过 this.reason 取值
+
+小程序中，通过 this.data.reason 取值
+
+### 七、绑定事件传参
+
+在 vue 中，绑定事件传参挺简单，只需要在出发时间的方法中，把需要传递的数据作为形参传入就可以了，例如：
+
+```js
+<button @click="say('明天不上班')"></button>
+
+new Vue({
+  el: '#app',
+  methods: {
+    say(arg) {
+      console.log(arg);
+    }
+  }
+})
+```
+
+在小程序中，不能直接在绑定事件的方法中传入参数，需要将参数作为属性值，绑定到元素的 data- 属性上，然后在方法中，通过 e.currentTarget.dataset.* 的方法获取，从而完成参数的传递，很麻烦有没有...
+
+```js
+<view class="tr" bindtap="toApprove" data-id="{{ item.id }}"></view>
+
+Page({
+  data: {
+    reason: ''
+  },
+  toApprove(e) {
+    let id = e.currentTarget.dataset.id;
+  }
+})
+```
+
+### 八、父子组件通信
+
+#### 1. 子组件的使用
+
+在 vue 中，不需要：
+
+1. 编写子组件
+2. 在需要使用的父组件中通过 import 引入
+3. 在 vue 的 components 中注册
+4. 在模板中使用
+
+```js
+// 子组件 bar.vue
+<template>
+  <div class="search-box">
+    <div @click="say" :title="title" class="icon-dismiss"></div>
+  </div>
+</template>
+
+<script>
+export default{
+  props: {
+    title: {
+      type: String,
+      default: ''
+    }
+  },
+  methods: {
+    say() {
+      console.log("明天不上班");
+      this.$emit('HelloWorld');
+    }
+  }
+}
+</script>
+
+// 父组件
+<template>
+  <div class="container">
+    <bar :title="titel" @helloWorld="helloWorld" ></bar>
+  </div>
+</template>
+
+<script>
+  import Bar from './bar.vue';
+  export default {
+    data: {
+      title: "我是标题"
+    },
+    methods: {
+      helloWorld() {
+        console.log('我接收到子组件传递的事件了')
+      }
+    },
+    components: {
+      Bar
+    }
+  }
+</script>
+```
+
+在小程序中，需要：
+
+1. 编写子组件
+2. 在子组件的 json 文件中，将该文件声明为组件
+
+```js
+{
+  "component": true
+}
+```
+
+3. 在需要引入的父组件的 json 文件中，在 usingComponents 填写引入组件的组件名以及路路径
+
+```js
+"usingComponents": {
+  "tab-bar": "../../components/tabBar/tabBar"
+}
+```
+
+4. 在父组件中，直接引入即可
+
+```js
+<tab-bar currentpage="index"></tab-bar>
+```
+
+具体代码：
+
+```js
+// 子组件
+<!--components/tabBar/tabBar.wxml-->
+<view class='tabbar-wrapper'>
+  <view class='left-bar {{ currentpage === "index" ? "active": "" }}' bindtap='jumpToIndex'>
+    <text class='iconfont icon-shouye'></text>
+    <view>首页</view>
+  </view>
+  <view class='right-bar {{ currentpage === "setting" ? "active": "" }}' bindtap='jumpToSetting'>
+    <text class='iconfont icon-shezhi'></text>
+    <view>设置</view>
+  </view>
+</view>
+```
+
+#### 2. 父子组件间通信
+
+**在 vue 中**
+
+父组件向子组件传递数据，只需要在子组件通过 v-bind 传入一个值，在子组件中，通过 props 接收，即可完成数据的传递，示例：
+
+```js
+// 父组件 foo.vue
+<template>
+  <div class="container">
+    <bar :title="title"></bar>
+  </div>
+</template>
+
+<script>
+  import Bar from './bar.vue'
+
+  export default {
+    data: {
+      title: "我是标题"
+    },
+    components: {
+      Bar,
+    }
+  }
+</script>
+
+// 子组件bar.vue
+<template>
+  <div class="search-box">
+    <div :title="title"></div>
+  </div>
+</template>
+
+<script>
+  export default {
+    props: {
+      title: {
+        type: String,
+        default: ''
+      }
+    }
+  }
+</script>
+```
+
+子组件和父组件通信可以通过 this.$emit 将方法和数据传递给父组件。
+
