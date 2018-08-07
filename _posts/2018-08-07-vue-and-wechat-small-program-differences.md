@@ -361,3 +361,70 @@ export default{
 
 子组件和父组件通信可以通过 this.$emit 将方法和数据传递给父组件。
 
+**在小程序中**
+
+父组件向子组件通信和vue类似，但是小程序没有通过 v-bind ，而是直接将值赋值给一个变量，如下：
+
+```js
+<tab-bar currentpage="index"></tab-bar>
+```
+
+此处，"index" 就是向子组件传递的值。
+
+在子组件 properties 中，接收传递的值。
+
+```js
+properties: {
+  // 弹窗标题
+  currentpage: {    // 属性名
+    type: String,   // 类型（必填），目前接受的类型包括：String，Number，Boolean，Object， Array，null（表示任意类型）
+    value: 'index', // 属性初始值（可选），如果未指定则会根据类型选择一个
+  }
+}
+```
+
+子组件向父组件通讯和 vue 也很类似，代码如下：
+
+```js
+// 子组件中
+methods: {
+  // 传递给父组件
+  cancelBut: function(e) {
+    let that = this;
+    let myEventDetail = { pickerShow: false, type: 'cancel' } // detail 对象，提供给时间监听函数
+    this.triggerEvent('myevent', myEventDetail) // myevent 自定义名称事件，父组件中使用
+  }
+}
+
+// 父组件中
+<bar bind:myevent="toggleToast"></bar>
+
+// 获取子组件信息
+toggleToast(e) {
+  console.log(e.detail);
+}
+```
+
+#### 如果父组件想调用子组件的方法
+
+vue 会给子组件添加一个 ref 属性，通过 this.$refs.ref 的值便可以获取到该子组件，然后便可以调用子组件中的任意方法，例如：
+
+```js
+// 子组件
+<bar ref="bar"></bar>
+
+// 父组件
+this.$ref.bar.子组件的方法
+```
+
+小程序是给子组件添加 id 或者 class ，然后通过 this.selectComponent 找到子组件，然后再调用子组件的方法，示例：
+
+```js
+// 子组件
+<bar id="bar"></bar>
+
+// 父组件
+this.selectComponent('#id').syaHello()
+````
+
+小程序和 vue 在这点上太相似了，有木有...
