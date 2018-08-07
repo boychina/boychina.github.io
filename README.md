@@ -125,8 +125,8 @@ SEOTitle: Hux Blog			# check out docs for more detail
 description: "Cool Blog"    # ...
 
 # SNS settings      
-github_username: huxpro     # modify this account to yours
-weibo_username: huxpro      # the footer woule be auto-updated.
+github_username: boychiaa     # modify this account to yours
+weibo_username: zhaohuansir   # the footer woule be auto-updated.
 
 # Build settings
 # paginate: 10              # nums of posts in one page
