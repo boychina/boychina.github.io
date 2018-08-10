@@ -148,9 +148,60 @@ tags:
             2. select * from student where name like "习__";
             3. select * from student where name like "习_";
     5. 范围查询
+        1. in                       表示在一个非连续的范围内
+        2. between ... and ...      表示在一个连续的范围内
+            1. 需求：查询编号为8、10、12的学生
+            2. 示例：select * from student where id in (8, 10, 12);
+            3. 需求：查询编号为6到8的学生
+            4. 示例：select * from student where id between 6 and 8;
     6. 空判断
+        insert into student(name, age) values("特朗普", 70);
+
+        1. 注意：null 与 "" 是不同的
+        2. 判断空： is null
+        3. 判断非空： is not null
+            1. 需求：查询没有地址的同学
+            2. 示例：select * from student where address is null;
+            3. 需求：查询有地址的同学
+            4. 示例：select * from student where address is not null;
     7. 优先级
+        1. 小括号 > not > 比较运算符 > 逻辑运算符
+        2. and 比 or 优先级高，如果同时出现并希望先选or，需要结合()来使用
 4. 聚合
+    为了快速得到统计数据，提供了5个聚合函数
+    1. count(*)     表示计算总行数，括号中可以写*和列名
+    2. max(列)      表示求此列的最大值
+    3. min(列)      表示求此列的最小值
+    4. sum(列)      表示求此列的和
+    5. avg(列)      表示求此列的平均值
+        1. 需求：查询学生总数
+        2. 示例：select count(*) form student;
+        3. 需求：查询女生的编号最大值
+        4. 示例：select max(id) from student where gender=0;
+        5. 需求：查询女的编号的最小值
+        6. 示例：select min(id) from student where gender=0;
+        7. 需求：查询所有女生的年龄和
+        8. 示例：select sum(age) from student;
+        9. 需求：查询所有学生的年龄平均值
+        10. 示例：select avg(age) from student;
 5. 分组
+    按照字段分组，表示此字段相同的数据会被放到一个集合中。
+    分组后，只能查询出相同的数据列，对于有差异的数据列无法显示在结果集中
+    可以对分组后的数据进行统计，做聚合运算
+
+    1. 语法：select 列1,列2,聚合... from 表名 group by 列1,列2,列3,...
+    2. 需求：查询男女生总数
+    3. 示例：
+        1. select gender,count(*) from student group by gender;
+        2. select name,gender,count(*) from student group by gender,age;
+    4. 分组后的数据筛选：select 列1,列2,聚合... from 表名 group by 列1, 列2, 列3, ... having 列1,...聚合...
+    5. 示例：select gender,count(*) from student group by gender having gender=1;
+
+    > where 与 having 的区别：
+    > where 是对 from 后面指定的表进行筛选，属于对原始数据的筛选
+    > having 是对 group by 的结果进行筛选
+6. 排序
+    1. 语法：
+7. 分页
 
 ### 六、关联
