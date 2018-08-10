@@ -201,7 +201,43 @@ tags:
     > where 是对 from 后面指定的表进行筛选，属于对原始数据的筛选
     > having 是对 group by 的结果进行筛选
 6. 排序
-    1. 语法：
+    1. 语法：select * from 表名 order by 列1 asc|desc, lie2 asc|desc, ...
+    2. 说明：
+        1. 将数据按照列1进行排序，如果某些列1的值相同，则按照列2进行排序
+        2. 默认按照从小到大的顺序排序
+        3. asc升序
+        4. desc降序
+    3. 需求：将没有被删除的数据按照年龄排序
+    4. 示例：
+        1. select * from student where isDelete=0 order by age desc;
+        2. select * from student where isDelete=0 order by age desc, id desc;
 7. 分页
+    1. 语法：select * from 表名 limit start, count;
+    2. 说明：start 索引从0开发
+    3. 示例：
+        1. select * from student limit 0, 3;
+        2. select * from student limit 3, 3;
+        3. select * from student where gender=1 limit 0, 3;
 
 ### 六、关联
+
+1. 建表语句：
+    1. create table class(id int auto_increment primary key, name varchar(20) not null, stuNum int not null);
+    2. create table students(id int auto_increment primary key, name varchar(20) not null, gender bit default 1, classid int not null, foreign key(classid) references class(id));
+2. 插入一些数据：
+    1. insert into class values(0, "class01", 55), (0, "class02", 50), (0, "class03", 60), (0, "class04", 80);
+    2. insert into students values(0, "tom", 1, 1);
+    3. insert into students values(0, "lucy", 1, 10);   //创建不成功，报错
+    4. insert into students values(0, "jack", 1, 2);
+    select * from students;
+3. 关联查询：
+    1. select students.name, class.name from class inner join students on calss.id=students.classid;
+    2. select students.name, class.name from class left join students on class.id=students.classid;
+    3. select students.name, class.name from class right join students on class.id=students.class.id;
+4. 分类：
+    1. 表A innner join 表B;
+        表A与表B匹配的行会出现在结果集中
+    2. 表A left join 表B;
+        表A与表B匹配的行会出现在结果集中，外加表A中独有的数据，未对应的数据使用null填充
+    3. 表A right join 表B;
+        表A与表B匹配的行会出现在结果集中，外加表B中独有的数据，未对应的数据使用null填充
