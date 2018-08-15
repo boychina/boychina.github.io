@@ -2,7 +2,7 @@
 layout:     post
 title:      "React 新的生命周期钩子"
 subtitle:   "React new life cycle hook"
-date:       2018-08-18
+date:       2018-08-15
 author:     "Mr.厉害"
 header-img: "img/in-post/make-the-cli-with-node/make-the-cli-with-node-bg.jpg"
 header-mask: 0.3
@@ -70,6 +70,7 @@ getSnapshotBeforeUpdate 配合 componentDidUpdate 可以取代 componentWillUpda
 现在，React 推荐将原本在 componentWillMount 中的网络请求移到 componentDidMount 中。至于这样会不会导致请求被延迟发出影响用户体验，React 团队是这么解释的：
 
 > There is a common misconception that fetching in componentWillMount lets you avoid the first empty rendering state. In practice this was never true because React has always executed render immediately after componentWillMount. If the data is not available by the time componentWillMount fires, the first render will still show a loading state regardless of where you initiate the fetch. This is why moving the fetch to componentDidMount has no perceptible effect in the vast majority of cases.
+
 > 有一种常见的误解，认为在componentWillMount中请求可以避免第一个空呈现状态。在实践中，这从来都不是正确的，因为在组件挂起之后，React 总是立即执行。如果数据在组件挂起的时候没有可用，那么第一个渲染将仍然显示加载状态，而不管您发起请求的位置。这就是为什么在绝大多数情况下移动fetch到componentDidMount并没有明显的效果。
 
 componentWillMount、render 和 componentDidMount 方法虽然存在调用先后顺序，但在大多数情况下，几乎都是在很短的时间内先后执行完毕，几乎不会对用户体验产生影响。
