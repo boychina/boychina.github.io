@@ -4,7 +4,7 @@ title:      "React 新的生命周期钩子"
 subtitle:   "React new life cycle hook"
 date:       2018-08-15
 author:     "Mr.厉害"
-header-img: "img/in-post/make-the-cli-with-node/make-the-cli-with-node-bg.jpg"
+header-img: "img/post-bg/2018-08-11-04.jpg"
 header-mask: 0.3
 catalog:    true
 tags:

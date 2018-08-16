@@ -4,7 +4,7 @@ title:      "H5移动端常见问题及注意事项"
 subtitle:   "Common problems and matters needing attention on h5 mobile terminal"
 date:       2018-08-06
 author:     "Mr.厉害"
-header-img: "img/in-post/make-the-cli-with-node/make-the-cli-with-node-bg.jpg"
+header-img: "img/post-bg/2018-08-11-01.jpg"
 header-mask: 0.3
 catalog:    true
 tags:
