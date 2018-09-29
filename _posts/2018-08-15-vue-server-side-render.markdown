@@ -105,7 +105,6 @@ server.listen(8080);
     <h1>vue-ssr</h1>
     <router-link class="link" to="/comp1">to comp1</router-link>
     <router-link class="link" to="/comp2">to comp2</router-link>
-
     <router-view class="view"></router-view>
   </div>
 </template>
@@ -227,42 +226,42 @@ export default context => {
 ###### a. webpack.base.config 配置文件
 
 ```js
-const path = require('path')
-const webpack = require('webpack')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const path = require("path");
+const webpack = require("webpack");
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
-  devtool: '#cheap-module-source-map',
+  devtool: "#cheap-module-source-map",
   output: {
-    path: path.resolve(__dirname, '../dist'),
-    publicPath: '/',
-    filename: '[name]-[chunkhash].js'
+    path: path.resolve(__dirname, "../dist"),
+    publicPath: "/",
+    filename: "[name]-[chunkhash].js"
   },
   resolve: {
     alias: {
-      'public': path.resolve(__dirname, '../public'),
-      'components': path.resolve(__dirname, '../src/components')
+      public: path.resolve(__dirname, "../public"),
+      components: path.resolve(__dirname, "../src/components")
     },
-    extensions: ['.js', '.vue']
+    extensions: [".js", ".vue"]
   },
   module: {
     noParse: /es6-promise\.js$/,
     rules: [
       {
         test: /\.(js|vue)/,
-        use: 'eslint-loader',
-        enforce: 'pre',
+        use: "eslint-loader",
+        enforce: "pre",
         exclude: /node_modules/
       },
       {
         test: /\.vue$/,
         use: {
-          loader: 'vue-loader',
+          loader: "vue-loader",
           options: {
             preserveWhitespace: false,
             postcss: [
-              require('autoprefixer')({
-                browsers: ['last 3 versions']
+              require("autoprefixer")({
+                browsers: ["last 3 versions"]
               })
             ]
           }
@@ -270,64 +269,291 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        use: 'babel-loader',
+        use: "babel-loader",
         exclude: /node_modules/
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         use: {
-          loader: 'url-loader',
+          loader: "url-loader",
           options: {
             limit: 10000,
-            name: 'img/[name].[hash:7].[ext]'
+            name: "img/[name].[hash:7].[ext]"
           }
         }
       },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
         use: {
-          loader: 'url-loader',
+          loader: "url-loader",
           options: {
             limit: 10000,
-            name: 'fonts/[name].[hash:7].[ext]'
+            name: "fonts/[name].[hash:7].[ext]"
           }
         }
       },
       {
         test: /\.css$/,
-        use:['vue-style-loader', 'css-loader']
+        use: ["vue-style-loader", "css-loader"]
       },
       {
         test: /\.json/,
-        use: 'json-loader'
+        use: "json-loader"
       }
     ]
   },
   performance: {
     maxEntrypointSize: 300000,
-    hints:'warning'
+    hints: "warning"
   },
   plugins: [
     new webpack.optimize.UglifyJsPlugin({
       compress: { warning: false }
     }),
     new ExtractTextPlugin({
-      filename: 'common.[chunkhash].css'
+      filename: "common.[chunkhash].css"
     })
   ]
-}
+};
 ```
 
 ###### b. webpack.client.config.js 配置文件
 
 ```js
+const path = require("path");
+const webpack = require("webpack");
+const merge = require("webpack-merge");
+const base = require("./webpack.base.config");
+const glob = require("glob");
+const VueSSRClientPlugin = require("vue-server-renderre/client-plugin");
 
-
-
-
+const config = mrege(base, {
+  entry: {
+    app: "./src/client-entry.js"
+  },
+  resolve: {
+    alias: {
+      "create-api": "./create-api-client.js"
+    }
+  },
+  plugins: [
+    new webpack.DefinPlugin({
+      "process.env.NODE_ENV": JSON.stringify(
+        process.env.NODE_ENV || "development"
+      ),
+      "process.env.VUE_ENV": '"client"',
+      "process.env.DEBUG_API": '"true"'
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: "vendor",
+      minChunks: function(module) {
+        return (
+          /node_modules/.test(module.context) && !/\.css$/.test(module.require)
+        );
+      }
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: "manifest"
+    }),
+    // 这是讲服务器的整个输出
+    // 构建为单个 JSON 文件的插件。
+    // 默认文件名为 `vue-ssr-server-bundle.json`
+    new VueSSRClientPlugin()
+  ]
+});
+module.exports = config;
 ```
 
+###### c. webpack.server.config.js 配置文件
 
+```js
+const path = require("path");
+const webpack = require("webpack");
+const merge = require("webpack-merge");
+const base = require("./webpack.base.config");
+const nodeExternals = require("webpack-node-externals");
+const VueSSRServerPlugin = require("vue-server-renderre/server-plugin");
 
+module.exports = merge(base, {
+  target: "node",
+  devtool: "#source-map",
+  entry: "./src/server-entry.js",
+  output: {
+    filename: "server-bundle.js",
+    libraryTarget: "commonjs2"
+  },
+  resolve: {
+    alias: {
+      "create-api": "./create-api-server.js"
+    }
+  },
+  externals: nodeExternals({
+    whitelist: /\.css$/
+  }),
+  plugins: [
+    new webpack.DefinePlugin({
+      "process.env.NODE_ENV": JSON.stringify(
+        process.env.NODE_ENV || "development"
+      ),
+      "process.env.VUE_ENV": '"server"'
+    }),
+    new VueSSRServerPlugin()
+  ]
+});
+```
 
+webpack 配置完成，其实东西不多，都是常规配置。需要注意的是 webpack.server.config.js 配置，output 是生成一个 commmonjs 的 library，VueSSRServerPlugin 用这是将服务器的整个输出构建为单个 JSON 文件的插件。
 
+##### (2) webpack build poject
+
+build 代码
+
+```js
+webpack --config build/webpack.client.config.js
+webpack --config build/webpack.server.config.js
+```
+
+打包后会生成一些打包文件，其中 server.config 打包后会生成 vue-ssr-server-bundle.json 文件，这个文件是给 createBundleRender 用的，用于服务端渲染 html 文件
+
+```js
+const { createBundleRenderer } = require("vue-server-renderer");
+const renderer = createBundleRenderer("/path/to/vue-ssr-server-bundle.json", {
+  // ....renderer 的其他选项
+});
+```
+
+细心的你还会发现 client.config 不仅生成了一个客户端用到的 js 文件，还会生成一份 vue-ssr-client-manifest.json 文件，这个文件是客户端构建清单，服务端难道这份构建清单会找到用户初始化 js 脚本或 css 注入到 html 一起发送给浏览器。
+
+##### (3) 服务端渲染
+
+其实上面都是准备工作，最重要的异步是将 webpack 构建后的资源代码给服务端用于生成 html。我们需要用 node 写一个服务端应用，通过打包后的资源生成 html 并发送给浏览器。
+
+server.js
+
+```js
+const fs = require("fs");
+const path = require("path");
+const Koa = require("koa");
+const KoaRuoter = require("koa-router");
+const serve = require("koa-static");
+const { createBundleRenderer } = require("vue-server-renderer");
+const LRU = require("lru-cache");
+
+const resolve = file => path.resolve(__dirname, file);
+const app = new Koa();
+const router = new KoaRuoter();
+const template = fs.readFileSync(resolve("./src/index.template.html"), "utf-8");
+
+function createRenderer(bundle, options) {
+  return createBundleRenderer(
+    bundle,
+    Object.assign(options, {
+      template,
+      cache: LRU({
+        max: 1000,
+        maxAge: 1000 * 60 * 15
+      }),
+      basedir: resolve("./dist"),
+      runInNewContext: false
+    })
+  );
+}
+
+let renderer;
+const bundle = require("./dist/vue-ssr-server-bundle.json");
+const clientManifest = require("./dist/vue-ssr-client-manifest.json");
+renderer = createRenderer(bundle, {
+  clientManifest
+});
+
+/**
+ * 渲染函数
+ * @param ctx
+ * @param next
+ * @returns {Promise}
+ */
+function render(ctx, next) {
+  ctx.set("Content-Type", "text/html");
+  return new Promise(function(resolve, reject) {
+    const handleError = err => {
+      if (err && err.code === 404) {
+        ctx.status = 404;
+        ctx.body = "404 | Page Not Found";
+      } else {
+        ctx.status = 500;
+        ctx.body = "500 | Internal Server Error";
+        console.error(`error during render : ${ctx.url}`);
+        console.error(err.stack);
+      }
+      resolve();
+    };
+    const context = {
+      title: "Vue Ssr 2.3",
+      url: ctx.url
+    };
+    renderer.renderToString(context, (err, html) => {
+      if (err) {
+        return handleError(err);
+      }
+      console.log(html);
+      ctx.body = html;
+      resolve();
+    });
+  });
+}
+
+// app.use(serve("/dist", "./dist", true));
+// app.use(serve("/public", "./public", true));
+app.use(serve(__dirname + '/dist'))
+
+router.get("*", render);
+app.use(router.routes()).use(router.allowedMethods());
+
+const port = process.env.PORT || 8089;
+app.listen(port, "0.0.0.0", () => {
+  console.log(`server started at localhost:${port}`);
+});
+```
+
+这里我们用到了最开始 demo 用到的 vue-server-renderer npm 包，通过读取 vue-ssr-server-bundle.json 和 vue-ssr-client-manifest.json 文件 renderer 出 html，最后 ctx.body = html 发送给浏览器，我们试着 console.log(html) 出 html 看看服务端到底渲染出了何方神圣：
+
+```html
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+  <title>Vue Ssr 2.3</title>
+  <meta charset="utf-8"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1"/>
+  <meta name="renderer" content="webkit"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui"/>
+  <meta name="theme-color" content="#f60"/>
+  <link rel="preload" href="/dist/manifest-56dda86c1b6ac68c0279.js" as="script"><link rel="preload" href="/dist/vendor-3504d51340141c3804a1.js" as="script"><link rel="preload" href="/dist/app-ae1871b21fa142b507e8.js" as="script">
+  <style data-vue-ssr-id="41a1d6f9:0">
+    .link {
+      margin: 10px;
+    }
+  </style>
+  <style data-vue-ssr-id="7add03b4:0"></style></head>
+<body>
+
+<div id="app" data-server-rendered="true">
+<h1>vue-ssr</h1>
+  <a href="/comp1" class="link router-link-exact-active router-link-active">to comp1</a>
+  <a href="/comp2" class="link">to comp2</a>
+  <section class="view">组件 1</section>
+</div>
+
+<script src="/dist/manifest-56dda86c1b6ac68c0279.js" defer>
+</script>
+<script src="/dit/vendor-3504d51340141c3804a1.js" defer></script>
+<script src="/dist/app-ae1871b21fa142b507e8.js" defer></script>
+</body>
+</html>
+```
+
+可以看到服务端把路由下的 组件1 也给渲染出来了，而不是让客户端去动态加载，其次是 html 也被注入了一些 script 标签去加载对应的客户端资源。这里再多说一下，有的同学可能不理解，服务端渲染不就是最后输出html让浏览器渲染吗，怎么 html 还带 js 脚本，注意，服务端渲染出的 html 只是首次展示给用户的页面而已，用户后期操作页面处理数据还是需要 js 脚本去跑的，也就是 webpack 为什么要打包出一套服务端代码（用于渲染首次html用），一套客户端代码（用于后期交互和数据处理用）
+
+### 四、小结
+
+本篇简单了解了 vue ssr 的简单流程，服务端渲染还有比较重要的一部分是首屏数据的获取渲染，一般页面展示都会有一些网络数据初始化，服务端渲染可以将这些数据获取到插入到 html。
