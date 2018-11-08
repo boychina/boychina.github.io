@@ -75,7 +75,7 @@ server.listen(8080);
     ├──  client-entry.js           # client 的入口文件
     ├──  index.template.html       # html 模板
     ├──  server-entry.js           # server 的入口文件
-├──  server.js           # server 服务
+├──  server.js                     # server 服务
 ```
 
 其中：
