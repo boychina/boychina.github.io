@@ -2,7 +2,7 @@
 layout: post
 title: "前端数据流文件下载三种方式"
 subtitle: "Three ways of downloading front-end data stream files"
-date: 2018-08-15
+date: 2018-12-12
 author: "Mr.厉害"
 header-img: "img/post-bg/2018-08-11-05.jpg"
 header-mask: 0.3
