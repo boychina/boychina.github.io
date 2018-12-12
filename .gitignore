@@ -6,3 +6,7 @@ npm-debug.log
 */*/.DS_Store
 *.sh
 package-lock.json
+
+boychina.github.io.iml
+
+.idea
