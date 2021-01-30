@@ -55,6 +55,7 @@ http://www.eggcake.cn/posts/2020-12-19-vue3-core-source-code-0
 http://www.eggcake.cn/posts/2020-12-21-vue3-core-source-code-1
 http://www.eggcake.cn/posts/2020-12-23-vue3-core-source-code-2
 http://www.eggcake.cn/posts/2020-12-24-vue3-core-source-code-3
+http://www.eggcake.cn/posts/2020-12-30-vue3-core-source-code-4
 http://www.eggcake.cn/posts/dynamic-routing
 http://www.eggcake.cn/posts/hello-world
 http://www.eggcake.cn/posts/preview
@@ -145,6 +146,7 @@ http://wap.eggcake.cn/posts/2020-12-19-vue3-core-source-code-0
 http://wap.eggcake.cn/posts/2020-12-21-vue3-core-source-code-1
 http://wap.eggcake.cn/posts/2020-12-23-vue3-core-source-code-2
 http://wap.eggcake.cn/posts/2020-12-24-vue3-core-source-code-3
+http://wap.eggcake.cn/posts/2020-12-30-vue3-core-source-code-4
 http://wap.eggcake.cn/posts/dynamic-routing
 http://wap.eggcake.cn/posts/hello-world
 http://wap.eggcake.cn/posts/preview
