@@ -1,3 +1,4 @@
+http://www.eggcake.cn/.amp
 http://www.eggcake.cn/date/2014-10-01
 http://www.eggcake.cn/date/2014-11-20
 http://www.eggcake.cn/date/2015-03-10
@@ -215,6 +216,7 @@ http://www.eggcake.cn/tag/ssr
 http://www.eggcake.cn/tag/typescript
 http://www.eggcake.cn/tag/vue
 http://www.eggcake.cn/tag/webpack
+http://wap.eggcake.cn/.amp
 http://wap.eggcake.cn/date/2014-10-01
 http://wap.eggcake.cn/date/2014-11-20
 http://wap.eggcake.cn/date/2015-03-10
